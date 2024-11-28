@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: dati_finali
+    database: raw
+    tables:
+      - name: dati_finali
