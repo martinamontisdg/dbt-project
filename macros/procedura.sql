@@ -21,6 +21,7 @@
         {% set query %}
             INSERT INTO dati_finali.{{ table_finale }} 
             (SELECT * FROM dati_delta.{{ table_delta }})
+
         {% endset %}
         {% do run_query(query)%}
        
@@ -28,7 +29,16 @@
     {% elif update_mode_value == 'append' %} 
         {% set query %}
             INSERT INTO dati_finali.{{ table_finale }} 
-            (SELECT * FROM dati_delta.{{ table_delta }})
+            SELECT *
+            FROM dati_delta.{{ table_delta }} AS delta
+            WHERE NOT EXISTS (
+            SELECT 1
+            FROM dati_finali.{{ table_finale }} AS final
+             WHERE delta.nome_prod = final.nome_prod
+            AND delta.cod_prod = final.cod_prod
+            AND delta.categoria_prod = final.categoria_prod
+            AND delta.anno = final.anno
+            )
         {% endset %}
         {% do run_query(query)%}
 
